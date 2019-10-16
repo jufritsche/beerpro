@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <ToggleButton
             android:id="@+id/addToFridge"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
@@ -60,7 +60,8 @@
             android:layout_weight="1"
             android:drawableTop="@drawable/ic_refrigerator"
             android:drawableTint="@android:color/darker_gray"
-            android:text="In den Kühlschrank"
+            android:textOff="In Kühlschrank hinzufügen"
+            android:textOn="Aus Kühlschrank entfernen"
             android:textColor="@android:color/darker_gray"
             android:textSize="10sp" />
 
