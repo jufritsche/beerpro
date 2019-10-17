@@ -3,6 +3,7 @@ package ch.beerpro.presentation.details;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -183,5 +184,30 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    @OnClick(R.id.button2)
+    public void onShareClickedListener() {
+
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setType("text/plain");
+
+        String beerName = (String) name.getText();
+        String beerAvgRating = (String) avgRating.getText();
+        String beerManufacturer = (String) manufacturer.getText();
+        String beerCategory = (String) category.getText();
+        String beerRatingCount = (String) numRatings.getText();
+
+        String beerData = "Shared beer '" + beerName + "'";
+        beerData += "\nAverage Rating: " + beerAvgRating;
+        beerData += "\nAmount of Ratings: " + beerRatingCount;
+        beerData += "\nManufacturer: " + beerManufacturer;
+        beerData += "\nCategory: " + beerCategory;
+
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, beerName);
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, beerData);
+
+
+        startActivity(Intent.createChooser(intent, "Share raw beer data"));
     }
 }
