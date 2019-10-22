@@ -24,6 +24,7 @@ import ch.beerpro.GlideApp;
 import ch.beerpro.R;
 import ch.beerpro.domain.models.Beer;
 import ch.beerpro.domain.models.MyBeer;
+import ch.beerpro.domain.models.MyBeerFromFridge;
 import ch.beerpro.domain.models.MyBeerFromRating;
 import ch.beerpro.domain.models.MyBeerFromWishlist;
 import ch.beerpro.presentation.utils.DrawableHelpers;
@@ -118,8 +119,7 @@ public class MyBeersRecyclerViewAdapter extends ListAdapter<MyBeer, MyBeersRecyc
             itemView.setOnClickListener(v -> listener.onMoreClickedListener(photo, item));
             removeFromWishlist.setOnClickListener(v -> listener.onWishClickedListener(item));
 
-            String formattedDate =
-                    DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(entry.getDate());
+            String formattedDate = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(entry.getDate());
             addedAt.setText(formattedDate);
 
             if (entry instanceof MyBeerFromWishlist) {
@@ -131,6 +131,11 @@ public class MyBeersRecyclerViewAdapter extends ListAdapter<MyBeer, MyBeersRecyc
                         itemView.getResources().getColor(android.R.color.darker_gray));
                 removeFromWishlist.setText("Wunschliste");
                 onTheListSince.setText("beurteilt am");
+            } else if (entry instanceof MyBeerFromFridge) {
+                DrawableHelpers.setDrawableTint(removeFromWishlist,
+                        itemView.getResources().getColor(android.R.color.darker_gray));
+                removeFromWishlist.setText("Wunschliste");
+                onTheListSince.setText("im Kühlschrank seit");
             }
         }
     }

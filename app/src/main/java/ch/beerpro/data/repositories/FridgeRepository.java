@@ -41,7 +41,6 @@ public class FridgeRepository {
         return new FirestoreQueryLiveData<>(document, FridgeItem.class);
     }
 
-    // TODO: eine Imcrement/Decrement machen.
     public Task<Void> toggleUserFridgeItem(String userId, String itemId) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -54,7 +53,48 @@ public class FridgeRepository {
             if (task.isSuccessful() && task.getResult().exists()) {
                 return fridgeItemEntryQuery.delete();
             } else if (task.isSuccessful()) {
-                return fridgeItemEntryQuery.set(new FridgeItem(userId, itemId, new Date()));
+                return fridgeItemEntryQuery.set(new FridgeItem(userId, itemId, 1, new Date()));
+            } else {
+                throw task.getException();
+            }
+        });
+    }
+
+    public Task<Void> addUserFridgeItem(String userId, String itemId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String fridgeItemId = FridgeItem.generateId(userId, itemId);
+
+        DocumentReference fridgeItemEntryQuery = db.collection(FridgeItem.COLLECTION).document(fridgeItemId);
+
+        return fridgeItemEntryQuery.get().continueWithTask(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                int currentCount =  (int)(long) task.getResult().getLong("count"); // mmm spaghetti cast
+                return fridgeItemEntryQuery.update("count", ++currentCount);
+            } else if (task.isSuccessful()) {
+                return fridgeItemEntryQuery.set(new FridgeItem(userId, itemId, 1, new Date()));
+            } else {
+                throw task.getException();
+            }
+        });
+    }
+
+    public Task<Void> removeUserFridgeItem(String userId, String itemId) {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String fridgeItemId = FridgeItem.generateId(userId, itemId);
+
+        DocumentReference fridgeItemEntryQuery = db.collection(FridgeItem.COLLECTION).document(fridgeItemId);
+
+        return fridgeItemEntryQuery.get().continueWithTask(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                int currentCount =  (int)(long) task.getResult().getLong("count"); // mmm spaghetti cast
+                if(currentCount > 1) {
+                    return fridgeItemEntryQuery.update("count", --currentCount);
+                } else {
+                    return fridgeItemEntryQuery.delete();
+                }
             } else {
                 throw task.getException();
             }

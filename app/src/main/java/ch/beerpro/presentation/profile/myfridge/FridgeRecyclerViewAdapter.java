@@ -80,6 +80,15 @@ public class FridgeRecyclerViewAdapter extends ListAdapter<Pair<FridgeItem, Beer
         @BindView(R.id.removeFromFridge)
         Button remove;
 
+        @BindView(R.id.topUp)
+        Button topUp;
+
+        @BindView(R.id.drinkBeer)
+        Button drinkBeer;
+
+        @BindView(R.id.beerCount)
+        TextView beerCount;
+
         ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, itemView);
@@ -100,7 +109,17 @@ public class FridgeRecyclerViewAdapter extends ListAdapter<Pair<FridgeItem, Beer
             String formattedDate =
                     DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(fridgeItem.getAddedAt());
             addedAt.setText(formattedDate);
-            remove.setOnClickListener(v -> listener.onFridgeItemClickedListener(item));
+            String countText = "" + fridgeItem.getCount();
+            beerCount.setText(countText);
+            remove.setOnClickListener(v -> listener.onFridgeItemRemoveClickedListener(item));
+
+            // TODO: View mit aktueller BeerCount aktualisieren.
+            drinkBeer.setOnClickListener(v -> {
+                listener.onFridgeItemDrinkClickedListener(item);
+            });
+            topUp.setOnClickListener(v -> {
+                listener.onFridgeItemTopUpClickedListener(item);
+            });
         }
 
     }

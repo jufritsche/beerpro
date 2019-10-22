@@ -7,6 +7,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.Date;
 
+@IgnoreExtraProperties
 public class FridgeItem implements Entity {
     public static final String COLLECTION = "fridge";
     public static final String FIELD_ID = "id";
@@ -21,11 +22,13 @@ public class FridgeItem implements Entity {
     private String id;
     private String userId;
     private String beerId;
+    private int count;
     private Date addedAt;
 
-    public FridgeItem(String userId, String beerId, Date addedAt) {
+    public FridgeItem(String userId, String beerId, int count, Date addedAt) {
         this.userId = userId;
         this.beerId = beerId;
+        this.count = count;
         this.addedAt = addedAt;
     }
 
@@ -48,6 +51,10 @@ public class FridgeItem implements Entity {
         return this.beerId;
     }
 
+    public int getCount() {
+        return this.count;
+    }
+
     public Date getAddedAt() {
         return this.addedAt;
     }
@@ -62,6 +69,10 @@ public class FridgeItem implements Entity {
 
     public void setBeerId(String beerId) {
         this.beerId = beerId;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public void setAddedAt(Date addedAt) {

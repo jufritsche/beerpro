@@ -129,18 +129,30 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         dialog.setContentView(view);
 
-        ToggleButton fridgeBtn = dialog.findViewById(R.id.addToFridge);
+        Button fridgeBtn = dialog.findViewById(R.id.addToFridge);
         fridgeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                model.addItemInFridge(model.getBeer().getValue().getId());
+                addItemInFridge(findViewById(R.id.detail_view));
                 dialog.dismiss();
-                View detail_view = findViewById(R.id.detail_view);
-                Snackbar.make(detail_view, "Dem Kühlschrank hinzugefügt", Snackbar.LENGTH_SHORT).show();
             }
         });
 
         dialog.show();
+    }
+
+    public void addItemInFridge(View detail_view) {
+        model.addItemInFridge(model.getBeer().getValue().getId());
+        Snackbar
+                .make(detail_view, "Dem Kühlschrank hinzugefügt", Snackbar.LENGTH_LONG)
+                .setAction("+1", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        addItemInFridge(detail_view);
+                    }
+                })
+                .setActionTextColor(getResources().getColor(R.color.colorPrimary))
+                .show();
     }
 
     private void updateBeer(Beer item) {

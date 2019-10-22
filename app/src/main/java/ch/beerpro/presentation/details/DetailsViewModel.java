@@ -70,7 +70,7 @@ public class DetailsViewModel extends ViewModel implements CurrentUser {
     }
 
     public Task<Void> addItemInFridge(String itemId) {
-        return fridgeRepository.toggleUserFridgeItem(getCurrentUser().getUid(), itemId);
+        return fridgeRepository.addUserFridgeItem(getCurrentUser().getUid(), itemId);
     }
 
     public Task<Void> toggleItemInWishlist(String itemId) {
