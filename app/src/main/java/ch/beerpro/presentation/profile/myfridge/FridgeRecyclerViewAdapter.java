@@ -113,12 +113,17 @@ public class FridgeRecyclerViewAdapter extends ListAdapter<Pair<FridgeItem, Beer
             beerCount.setText(countText);
             remove.setOnClickListener(v -> listener.onFridgeItemRemoveClickedListener(item));
 
-            // TODO: View mit aktueller BeerCount aktualisieren.
             drinkBeer.setOnClickListener(v -> {
+                fridgeItem.setCount(fridgeItem.getCount() - 1);
                 listener.onFridgeItemDrinkClickedListener(item);
+                String newCount = "" + fridgeItem.getCount();
+                beerCount.setText(newCount);
             });
             topUp.setOnClickListener(v -> {
+                fridgeItem.setCount(fridgeItem.getCount() + 1);
                 listener.onFridgeItemTopUpClickedListener(item);
+                String newCount = "" + fridgeItem.getCount();
+                beerCount.setText(newCount);
             });
         }
 
