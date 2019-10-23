@@ -35,6 +35,7 @@ import ch.beerpro.domain.models.Rating;
 import ch.beerpro.domain.models.Wish;
 import ch.beerpro.presentation.details.createrating.CreateRatingActivity;
 
+import static androidx.lifecycle.Transformations.switchMap;
 import static ch.beerpro.presentation.utils.DrawableHelpers.setDrawableTint;
 
 public class DetailsActivity extends AppCompatActivity implements OnRatingLikedListener {
@@ -104,12 +105,31 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
         adapter = new RatingsRecyclerViewAdapter(this, model.getCurrentUser());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
+        model.getOwnRatings().observe(this, (ratings) -> {
+            List<Rating> ownBeerRatings = new ArrayList<Rating>();
+            for (Rating rating : ratings) {
+                if (rating.getBeerId().equals(beerId)) {
+                    ownBeerRatings.add(rating);
+                }
+
+            }
+
+            float ratingTotal = 0;
+            for (Rating rating : ownBeerRatings) {
+                ratingTotal += rating.getRating();
+            }
+            int avgRating = (int) ratingTotal / ownBeerRatings.size();
+            addRatingBar.setRating(avgRating);
+            addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+
+        });
+
         model.getBeer().observe(this, this::updateBeer);
         model.getRatings().observe(this, this::updateRatings);
         model.getWish().observe(this, this::toggleWishlistView);
 
         recyclerView.setAdapter(adapter);
-        addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+
     }
 
     private void addNewRating(RatingBar ratingBar, float v, boolean b) {
@@ -184,4 +204,5 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }

@@ -17,13 +17,15 @@ import ch.beerpro.domain.models.Beer;
 import ch.beerpro.domain.models.Rating;
 import ch.beerpro.domain.models.Wish;
 
+import static androidx.lifecycle.Transformations.switchMap;
+
 public class DetailsViewModel extends ViewModel implements CurrentUser {
 
     private final MutableLiveData<String> beerId = new MutableLiveData<>();
     private final LiveData<Beer> beer;
     private final LiveData<List<Rating>> ratings;
     private final LiveData<Wish> wish;
-
+    private final LiveData<List<Rating>> ownRatings;
     private final LikesRepository likesRepository;
     private final WishlistRepository wishlistRepository;
 
@@ -38,6 +40,8 @@ public class DetailsViewModel extends ViewModel implements CurrentUser {
         beer = beersRepository.getBeer(beerId);
         wish = wishlistRepository.getMyWishForBeer(currentUserId, getBeer());
         ratings = ratingsRepository.getRatingsForBeer(beerId);
+        ownRatings = ratingsRepository.getMyRatings(currentUserId);
+
         currentUserId.setValue(getCurrentUser().getUid());
     }
 
@@ -53,6 +57,9 @@ public class DetailsViewModel extends ViewModel implements CurrentUser {
         return ratings;
     }
 
+    public LiveData<List<Rating>> getOwnRatings() {
+        return ownRatings;
+    }
     public void setBeerId(String beerId) {
         this.beerId.setValue(beerId);
     }
