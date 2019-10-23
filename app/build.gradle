@@ -44,11 +44,10 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:5.0.0'
 
 
-
     // an alternative to picasso
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    implementation ("com.github.bumptech.glide:recyclerview-integration:4.9.0") {
+    implementation("com.github.bumptech.glide:recyclerview-integration:4.9.0") {
         // Excludes the support library because it's already included by Glide.
         transitive = false
     }
