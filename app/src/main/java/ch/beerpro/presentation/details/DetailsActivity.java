@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ import butterknife.OnClick;
 import ch.beerpro.GlideApp;
 import ch.beerpro.R;
 import ch.beerpro.domain.models.Beer;
+import ch.beerpro.domain.models.FridgeItem;
 import ch.beerpro.domain.models.Rating;
 import ch.beerpro.domain.models.Wish;
 import ch.beerpro.presentation.details.createrating.CreateRatingActivity;
@@ -145,7 +148,31 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
         View view = getLayoutInflater().inflate(R.layout.single_bottom_sheet_dialog, null);
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         dialog.setContentView(view);
+
+        Button fridgeBtn = dialog.findViewById(R.id.addToFridge);
+        fridgeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addItemInFridge(findViewById(R.id.detail_view));
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
+    }
+
+    public void addItemInFridge(View detail_view) {
+        model.addItemInFridge(model.getBeer().getValue().getId());
+        Snackbar
+                .make(detail_view, "Dem Kühlschrank hinzugefügt", Snackbar.LENGTH_LONG)
+                .setAction("+1", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        addItemInFridge(detail_view);
+                    }
+                })
+                .setActionTextColor(getResources().getColor(R.color.colorPrimary))
+                .show();
     }
 
     private void updateBeer(Beer item) {
