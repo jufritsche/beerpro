@@ -57,8 +57,8 @@ public class MainViewModel extends ViewModel implements CurrentUser {
         MutableLiveData<String> currentUserId = new MutableLiveData<>();
         myWishlist = wishlistRepository.getMyWishlist(currentUserId);
         myRatings = ratingsRepository.getMyRatings(currentUserId);
-        myBeers = myBeersRepository.getMyBeers(allBeers, myWishlist, myRatings);
         myFridge = fridgeRepository.getMyFridge(currentUserId);
+        myBeers = myBeersRepository.getMyBeers(allBeers, myWishlist, myRatings, myFridge);
 
         /*
          * Set the current user id, which is used as input for the getMyWishlist and getMyRatings calls above.
@@ -82,7 +82,9 @@ public class MainViewModel extends ViewModel implements CurrentUser {
         return myWishlist;
     }
 
-    public LiveData<List<FridgeItem>> getMyFridge() { return myFridge; }
+    public LiveData<List<FridgeItem>> getMyFridge() {
+        return myFridge;
+    }
 
     public LiveData<List<String>> getBeerCategories() {
         return beersRepository.getBeerCategories();
