@@ -127,18 +127,21 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                     addRatingBar.setRating(avgRating);
                 }
             }
-            addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
         });
 
         model.getBeer().observe(this, this::updateBeer);
         model.getRatings().observe(this, this::updateRatings);
         model.getWish().observe(this, this::toggleWishlistView);
+        addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
 
         recyclerView.setAdapter(adapter);
 
     }
 
     private void addNewRating(RatingBar ratingBar, float v, boolean b) {
+        if (!b) {
+            return;
+        }
         Intent intent = new Intent(this, CreateRatingActivity.class);
         intent.putExtra(CreateRatingActivity.ITEM, model.getBeer().getValue());
         intent.putExtra(CreateRatingActivity.RATING, v);
