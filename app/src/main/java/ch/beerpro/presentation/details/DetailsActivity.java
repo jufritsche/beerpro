@@ -109,22 +109,25 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
         recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
         model.getOwnRatings().observe(this, (ratings) -> {
-            List<Rating> ownBeerRatings = new ArrayList<Rating>();
-            for (Rating rating : ratings) {
-                if (rating.getBeerId().equals(beerId)) {
-                    ownBeerRatings.add(rating);
+            if (ratings.size() > 0) {
+
+                List<Rating> ownBeerRatings = new ArrayList<Rating>();
+                for (Rating rating : ratings) {
+                    if (rating.getBeerId().equals(beerId)) {
+                        ownBeerRatings.add(rating);
+                    }
                 }
 
+                if (ownBeerRatings.size() > 0) {
+                    float ratingTotal = 0;
+                    for (Rating rating : ownBeerRatings) {
+                        ratingTotal += rating.getRating();
+                    }
+                    float avgRating = ratingTotal / ownBeerRatings.size();
+                    addRatingBar.setRating(avgRating);
+                }
             }
-
-            float ratingTotal = 0;
-            for (Rating rating : ownBeerRatings) {
-                ratingTotal += rating.getRating();
-            }
-            int avgRating = (int) ratingTotal / ownBeerRatings.size();
-            addRatingBar.setRating(avgRating);
             addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
-
         });
 
         model.getBeer().observe(this, this::updateBeer);
