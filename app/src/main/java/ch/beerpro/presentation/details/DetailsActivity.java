@@ -1,6 +1,7 @@
 package ch.beerpro.presentation.details;
 
 import android.app.ActivityOptions;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -94,7 +95,15 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                 .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         toolbar.setTitleTextColor(Color.alpha(0));
 
-        String beerId = getIntent().getExtras().getString(ITEM_ID);
+        String beerId = "";
+
+        if(getIntent().getExtras().getString(ITEM_ID) != null){
+            beerId = getIntent().getExtras().getString(ITEM_ID);
+        }else{
+            String beerUriData= getIntent().getDataString();
+            int dataLength = beerUriData.length();
+            beerId = beerUriData.substring(33,dataLength);
+        }
 
         model = ViewModelProviders.of(this).get(DetailsViewModel.class);
         model.setBeerId(beerId);
@@ -111,6 +120,7 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
 
         recyclerView.setAdapter(adapter);
         addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+
     }
 
     private void addNewRating(RatingBar ratingBar, float v, boolean b) {
@@ -185,29 +195,29 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                 return super.onOptionsItemSelected(item);
         }
     }
+
     @OnClick(R.id.button2)
     public void onShareClickedListener() {
-
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-        intent.setType("text/plain");
-
-        String beerName = (String) name.getText();
-        String beerAvgRating = (String) avgRating.getText();
-        String beerManufacturer = (String) manufacturer.getText();
-        String beerCategory = (String) category.getText();
-        String beerRatingCount = (String) numRatings.getText();
-
-        String beerData = "Shared beer '" + beerName + "'";
-        beerData += "\nAverage Rating: " + beerAvgRating;
-        beerData += "\nAmount of Ratings: " + beerRatingCount;
-        beerData += "\nManufacturer: " + beerManufacturer;
-        beerData += "\nCategory: " + beerCategory;
+/*
+        Object beerData = model.getBeer().getValue();
+        Intent intent = new Intent(this, DetailsActivity.class);
+*/
+        String beerID = model.getBeer().getValue().getId();
 
 
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, beerName);
-        intent.putExtra(android.content.Intent.EXTRA_TEXT, beerData);
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        Uri uri = (Uri)bundle.get(Intent.EXTRA_STREAM);
+
+        String text = "The uri is:\n(" + uri + ")\nThe raw intent:\n" +intent;
+
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "https://beershare.page.link/sh5r3" + beerID);
+
+        shareIntent.setType("plain/text");
+        startActivity(Intent.createChooser(shareIntent, "Share this beer"));
 
 
-        startActivity(Intent.createChooser(intent, "Share raw beer data"));
     }
+
 }

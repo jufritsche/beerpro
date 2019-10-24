@@ -33,12 +33,32 @@
             android:label="@string/title_activity_single_beer"
             android:parentActivityName=".presentation.explore.search.SearchActivity"
             android:theme="@style/DetailsPageTheme">
+            <tools:validation testUrl="https://beershare.page.link/sh5r3?apn=presentation.details.DetailsActivity" />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".presentation.explore.search.SearchActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="beershare.page.link"
+                    android:pathPrefix="/sh5r3" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".presentation.details.createrating.CreateRatingActivity"
+            android:parentActivityName=".presentation.details.DetailsActivity"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".presentation.details.DetailsActivity" />
+        </activity>
+        <activity
+            android:name=".presentation.details.share.ShareActivity"
             android:parentActivityName=".presentation.details.DetailsActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
