@@ -101,8 +101,13 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
             beerId = getIntent().getExtras().getString(ITEM_ID);
         }else{
             String beerUriData= getIntent().getDataString();
+
             int dataLength = beerUriData.length();
-            beerId = beerUriData.substring(33,dataLength);
+            if(dataLength > 39){
+                beerId = beerUriData.substring(39,dataLength);
+            }else{
+                beerId = "0rtJeO3g8b2QEFmOEivp";
+            }
         }
 
         model = ViewModelProviders.of(this).get(DetailsViewModel.class);
@@ -198,26 +203,14 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
 
     @OnClick(R.id.button2)
     public void onShareClickedListener() {
-/*
-        Object beerData = model.getBeer().getValue();
-        Intent intent = new Intent(this, DetailsActivity.class);
-*/
         String beerID = model.getBeer().getValue().getId();
-
-
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        Uri uri = (Uri)bundle.get(Intent.EXTRA_STREAM);
-
-        String text = "The uri is:\n(" + uri + ")\nThe raw intent:\n" +intent;
+        String url = "https://beershare.page.link/sh5r3?data=" + beerID;
 
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "https://beershare.page.link/sh5r3" + beerID);
-
+        shareIntent.putExtra(Intent.EXTRA_TEXT, url);
         shareIntent.setType("plain/text");
+
         startActivity(Intent.createChooser(shareIntent, "Share this beer"));
-
-
     }
 
 }
