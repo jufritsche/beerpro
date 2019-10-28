@@ -104,9 +104,12 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
 
             int dataLength = beerUriData.length();
             if(dataLength > 39){
-                beerId = beerUriData.substring(39,dataLength);
-            }else{
-                beerId = "0rtJeO3g8b2QEFmOEivp";
+                String subBeerString = beerUriData.substring(39,dataLength);
+                if(subBeerString.length() == 20){
+                    beerId = subBeerString;
+                }else{
+                    beerId = "0rtJeO3g8b2QEFmOEiv";//p at end for valid id. check for way to open main activity
+                }
             }
         }
 
@@ -207,6 +210,7 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
         String url = "https://beershare.page.link/sh5r3?data=" + beerID;
 
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out this beer:");
         shareIntent.putExtra(Intent.EXTRA_TEXT, url);
         shareIntent.setType("plain/text");
 
