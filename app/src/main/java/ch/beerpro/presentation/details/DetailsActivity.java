@@ -35,6 +35,7 @@ import ch.beerpro.R;
 import ch.beerpro.domain.models.Beer;
 import ch.beerpro.domain.models.Rating;
 import ch.beerpro.domain.models.Wish;
+import ch.beerpro.presentation.MainActivity;
 import ch.beerpro.presentation.details.createrating.CreateRatingActivity;
 
 import static ch.beerpro.presentation.utils.DrawableHelpers.setDrawableTint;
@@ -86,49 +87,51 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
-        ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        toolbar.setTitleTextColor(Color.alpha(0));
 
         String beerId = "";
+        String beerUriData = "";
+        String subBeerData = "";
+        int dataLength = 0;
 
-        if(getIntent().getExtras().getString(ITEM_ID) != null){
+        if (getIntent().getExtras().getString(ITEM_ID) != null) {
             beerId = getIntent().getExtras().getString(ITEM_ID);
-        }else{
-            String beerUriData= getIntent().getDataString();
-
-            int dataLength = beerUriData.length();
-            if(dataLength > 39){
-                String subBeerString = beerUriData.substring(39,dataLength);
-                if(subBeerString.length() == 20){
-                    beerId = subBeerString;
-                }else{
-                    beerId = "0rtJeO3g8b2QEFmOEiv";//p at end for valid id. check for way to open main activity
-                }
+        } else if(getIntent().getDataString() != null){
+            beerUriData = getIntent().getDataString();
+            dataLength = beerUriData.length();
+            subBeerData = beerUriData.substring(39, dataLength);
+            if (dataLength > 39 && subBeerData.length() == 20) {
+                beerId = subBeerData;
             }
         }
+        if (getIntent().getExtras().getString(ITEM_ID) != null || dataLength > 39 && subBeerData.length() == 20) {
+            setContentView(R.layout.activity_details);
+            ButterKnife.bind(this);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        model = ViewModelProviders.of(this).get(DetailsViewModel.class);
-        model.setBeerId(beerId);
+            getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            toolbar.setTitleTextColor(Color.alpha(0));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+            model = ViewModelProviders.of(this).get(DetailsViewModel.class);
+            model.setBeerId(beerId);
 
-        adapter = new RatingsRecyclerViewAdapter(this, model.getCurrentUser());
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
 
-        model.getBeer().observe(this, this::updateBeer);
-        model.getRatings().observe(this, this::updateRatings);
-        model.getWish().observe(this, this::toggleWishlistView);
+            adapter = new RatingsRecyclerViewAdapter(this, model.getCurrentUser());
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
-        recyclerView.setAdapter(adapter);
-        addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+            model.getBeer().observe(this, this::updateBeer);
+            model.getRatings().observe(this, this::updateRatings);
+            model.getWish().observe(this, this::toggleWishlistView);
 
+            recyclerView.setAdapter(adapter);
+            addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+        } else {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        }
     }
 
     private void addNewRating(RatingBar ratingBar, float v, boolean b) {
