@@ -1,12 +1,15 @@
 package ch.beerpro.presentation.details;
 
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -138,6 +141,15 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
             }
         });
 
+        Button addNoteBtn = dialog.findViewById(R.id.addPrivateNote);
+        addNoteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPrivateNoteDialog();
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
     }
 
@@ -153,6 +165,27 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                 })
                 .setActionTextColor(getResources().getColor(R.color.colorPrimary))
                 .show();
+    }
+
+    public void showPrivateNoteDialog() {
+        View noteInputView = getLayoutInflater().inflate(R.layout.note_dialog, null);
+
+        AlertDialog.Builder noteDialogBuilder = new AlertDialog.Builder(this);
+        noteDialogBuilder.setTitle("Private Notiz hinzufügen");
+
+        EditText input = noteInputView.findViewById(R.id.noteInput);
+
+        noteDialogBuilder.setView(noteInputView);
+        noteDialogBuilder.setPositiveButton("Speichern", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                TextView noteText = findViewById(R.id.privateNote);
+
+                noteText.setText(input.getText().toString());
+            }
+        });
+
+        noteDialogBuilder.show();
     }
 
     private void updateBeer(Beer item) {
