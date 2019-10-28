@@ -58,14 +58,6 @@
                 android:value=".presentation.details.DetailsActivity" />
         </activity>
         <activity
-            android:name=".presentation.details.share.ShareActivity"
-            android:parentActivityName=".presentation.details.DetailsActivity"
-            android:windowSoftInputMode="adjustResize">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".presentation.details.DetailsActivity" />
-        </activity>
-        <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
