@@ -7,6 +7,8 @@ import androidx.lifecycle.MediatorLiveData;
 
 import org.apache.commons.lang3.tuple.Triple;
 
+import ch.beerpro.presentation.utils.Quadruple;
+
 public class LiveDataExtensions {
 
     public static <A, B> LiveData<Pair<A, B>> zip(LiveData<A> as, LiveData<B> bs) {
@@ -88,6 +90,43 @@ public class LiveDataExtensions {
             private void update() {
                 if (lastA != null && lastB != null && lastC != null) {
                     this.setValue(Triple.of(lastA, lastB, lastC));
+                }
+            }
+        };
+    }
+
+    public static <A, B, C, D> LiveData<Quadruple<A, B, C, D>> combineLatest(LiveData<A> as, LiveData<B> bs, LiveData<C> cs, LiveData<D> ds) {
+        return new MediatorLiveData<Quadruple<A, B, C, D>>() {
+
+            A lastA = null;
+            B lastB = null;
+            C lastC = null;
+            D lastD = null;
+
+            {
+                {
+                    addSource(as, (A a) -> {
+                        lastA = a;
+                        update();
+                    });
+                    addSource(bs, (B b) -> {
+                        lastB = b;
+                        update();
+                    });
+                    addSource(cs, (C c) -> {
+                        lastC = c;
+                        update();
+                    });
+                    addSource(ds, (D d) -> {
+                        lastD = d;
+                        update();
+                    });
+                }
+            }
+
+            private void update() {
+                if (lastA != null && lastB != null && lastC != null && lastD != null) {
+                    this.setValue(Quadruple.of(lastA, lastB, lastC, lastD));
                 }
             }
         };
