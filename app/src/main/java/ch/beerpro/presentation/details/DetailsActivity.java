@@ -2,8 +2,10 @@ package ch.beerpro.presentation.details;
 
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -116,6 +119,22 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
 
         recyclerView.setAdapter(adapter);
         addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+
+        // read private note and set clicklistener to change note
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        TextView privateNote = findViewById(R.id.privateNote);
+        String note = sharedPref.getString(beerId, null);
+        if(note != null) {
+            privateNote.setText(note);
+        }
+
+        CardView noteView = findViewById(R.id.noteView);
+        noteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPrivateNoteDialog();
+            }
+        });
     }
 
     private void addNewRating(RatingBar ratingBar, float v, boolean b) {
@@ -169,19 +188,26 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
 
     public void showPrivateNoteDialog() {
         View noteInputView = getLayoutInflater().inflate(R.layout.note_dialog, null);
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String beerId = getIntent().getExtras().getString(ITEM_ID);
+
+        EditText input = noteInputView.findViewById(R.id.noteInput);
+        input.setText(sharedPref.getString(beerId, null));
 
         AlertDialog.Builder noteDialogBuilder = new AlertDialog.Builder(this);
         noteDialogBuilder.setTitle("Private Notiz hinzufügen");
 
-        EditText input = noteInputView.findViewById(R.id.noteInput);
 
         noteDialogBuilder.setView(noteInputView);
         noteDialogBuilder.setPositiveButton("Speichern", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 TextView noteText = findViewById(R.id.privateNote);
-
                 noteText.setText(input.getText().toString());
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(beerId, input.getText().toString());
+                editor.commit();
             }
         });
 

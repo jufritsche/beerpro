@@ -297,6 +297,7 @@
             android:layout_height="8dp" />
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/noteView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
