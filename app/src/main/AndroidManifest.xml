@@ -31,7 +31,7 @@
         <activity android:name=".presentation.explore.search.SearchActivity" />
         <activity
             android:name=".presentation.details.DetailsActivity"
-            android:label="@string/title_activity_single_beer"
+            android:label="Beer Pro"
             android:parentActivityName=".presentation.explore.search.SearchActivity"
             android:theme="@style/DetailsPageTheme">
             <tools:validation testUrl="https://beershare.page.link/sh5r3?apn=presentation.details.DetailsActivity" />
