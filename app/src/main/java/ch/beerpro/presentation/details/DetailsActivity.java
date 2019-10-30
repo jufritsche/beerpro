@@ -4,9 +4,13 @@ import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +23,7 @@ import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProviders;
@@ -42,8 +47,10 @@ import ch.beerpro.domain.models.Beer;
 import ch.beerpro.domain.models.FridgeItem;
 import ch.beerpro.domain.models.Rating;
 import ch.beerpro.domain.models.Wish;
+import ch.beerpro.presentation.MainActivity;
 import ch.beerpro.presentation.details.createrating.CreateRatingActivity;
 
+import static androidx.lifecycle.Transformations.switchMap;
 import static ch.beerpro.presentation.utils.DrawableHelpers.setDrawableTint;
 
 public class DetailsActivity extends AppCompatActivity implements OnRatingLikedListener {
@@ -93,32 +100,74 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
-        ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        getWindow().getDecorView()
-                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        toolbar.setTitleTextColor(Color.alpha(0));
+        String beerId = "";
+        String beerUriData = "";
+        String subBeerData = "";
+        int dataLength = 0;
 
-        String beerId = getIntent().getExtras().getString(ITEM_ID);
+        if (getIntent().getExtras().getString(ITEM_ID) != null) {
+            beerId = getIntent().getExtras().getString(ITEM_ID);
+        } else if(getIntent().getDataString() != null){
+            beerUriData = getIntent().getDataString();
+            dataLength = beerUriData.length();
+            subBeerData = beerUriData.substring(39, dataLength);
+            if (dataLength > 39 && subBeerData.length() == 20) {
+                beerId = subBeerData;
+            }
+        }
+        if (getIntent().getExtras().getString(ITEM_ID) != null || dataLength > 39 && subBeerData.length() == 20) {
+            setContentView(R.layout.activity_details);
+            ButterKnife.bind(this);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        model = ViewModelProviders.of(this).get(DetailsViewModel.class);
-        model.setBeerId(beerId);
+            getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            toolbar.setTitleTextColor(Color.alpha(0));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+            model = ViewModelProviders.of(this).get(DetailsViewModel.class);
+            model.setBeerId(beerId);
 
-        adapter = new RatingsRecyclerViewAdapter(this, model.getCurrentUser());
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
 
-        model.getBeer().observe(this, this::updateBeer);
-        model.getRatings().observe(this, this::updateRatings);
-        model.getWish().observe(this, this::toggleWishlistView);
+            adapter = new RatingsRecyclerViewAdapter(this, model.getCurrentUser());
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
-        recyclerView.setAdapter(adapter);
-        addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+
+            final String ratingBeerId = beerId;
+            model.getOwnRatings().observe(this, (ratings) -> {
+                if (ratings.size() > 0) {
+
+                    List<Rating> ownBeerRatings = new ArrayList<Rating>();
+                    for (Rating rating : ratings) {
+                        if (rating.getBeerId().equals(ratingBeerId)) {
+                            ownBeerRatings.add(rating);
+                        }
+                    }
+
+                    if (ownBeerRatings.size() > 0) {
+                        float ratingTotal = 0;
+                        for (Rating rating : ownBeerRatings) {
+                            ratingTotal += rating.getRating();
+                        }
+                        float avgRating = ratingTotal / ownBeerRatings.size();
+                        addRatingBar.setRating(avgRating);
+                    }
+                }
+            });
+
+            model.getBeer().observe(this, this::updateBeer);
+            model.getRatings().observe(this, this::updateRatings);
+            model.getWish().observe(this, this::toggleWishlistView);
+            addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
+
+            recyclerView.setAdapter(adapter);
+        } else {
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        }
 
         // read private note and set clicklistener to change note
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
@@ -138,6 +187,9 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
     }
 
     private void addNewRating(RatingBar ratingBar, float v, boolean b) {
+        if (!b) {
+            return;
+        }
         Intent intent = new Intent(this, CreateRatingActivity.class);
         intent.putExtra(CreateRatingActivity.ITEM, model.getBeer().getValue());
         intent.putExtra(CreateRatingActivity.RATING, v);
@@ -270,4 +322,19 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @OnClick(R.id.button2)
+    public void onShareClickedListener() {
+        String beerID = model.getBeer().getValue().getId();
+        String url = "https://beershare.page.link/sh5r3?data=" + beerID;
+
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out this beer:");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+        shareIntent.setType("plain/text");
+
+        startActivity(Intent.createChooser(shareIntent, "Share this beer"));
+    }
+
 }
+
