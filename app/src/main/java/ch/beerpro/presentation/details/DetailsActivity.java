@@ -41,6 +41,7 @@ import ch.beerpro.domain.models.Wish;
 import ch.beerpro.presentation.MainActivity;
 import ch.beerpro.presentation.details.createrating.CreateRatingActivity;
 
+import static androidx.lifecycle.Transformations.switchMap;
 import static ch.beerpro.presentation.utils.DrawableHelpers.setDrawableTint;
 
 public class DetailsActivity extends AppCompatActivity implements OnRatingLikedListener {
@@ -125,12 +126,33 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
             adapter = new RatingsRecyclerViewAdapter(this, model.getCurrentUser());
             recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
+            model.getOwnRatings().observe(this, (ratings) -> {
+                if (ratings.size() > 0) {
+
+                    List<Rating> ownBeerRatings = new ArrayList<Rating>();
+                    for (Rating rating : ratings) {
+                        if (rating.getBeerId().equals(beerId)) {
+                            ownBeerRatings.add(rating);
+                        }
+                    }
+
+                    if (ownBeerRatings.size() > 0) {
+                        float ratingTotal = 0;
+                        for (Rating rating : ownBeerRatings) {
+                            ratingTotal += rating.getRating();
+                        }
+                        float avgRating = ratingTotal / ownBeerRatings.size();
+                        addRatingBar.setRating(avgRating);
+                    }
+                }
+            });
+
             model.getBeer().observe(this, this::updateBeer);
             model.getRatings().observe(this, this::updateRatings);
             model.getWish().observe(this, this::toggleWishlistView);
+            addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
 
             recyclerView.setAdapter(adapter);
-            addRatingBar.setOnRatingBarChangeListener(this::addNewRating);
         } else {
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
@@ -138,6 +160,9 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
     }
 
     private void addNewRating(RatingBar ratingBar, float v, boolean b) {
+        if (!b) {
+            return;
+        }
         Intent intent = new Intent(this, CreateRatingActivity.class);
         intent.putExtra(CreateRatingActivity.ITEM, model.getBeer().getValue());
         intent.putExtra(CreateRatingActivity.RATING, v);
@@ -233,6 +258,7 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                 return super.onOptionsItemSelected(item);
         }
     }
+}
 
     @OnClick(R.id.button2)
     public void onShareClickedListener() {
@@ -248,3 +274,4 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
     }
 
 }
+

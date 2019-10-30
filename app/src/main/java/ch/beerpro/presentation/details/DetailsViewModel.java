@@ -19,14 +19,16 @@ import ch.beerpro.domain.models.FridgeItem;
 import ch.beerpro.domain.models.Rating;
 import ch.beerpro.domain.models.Wish;
 
+import static androidx.lifecycle.Transformations.switchMap;
+
 public class DetailsViewModel extends ViewModel implements CurrentUser {
 
     private final MutableLiveData<String> beerId = new MutableLiveData<>();
     private final LiveData<Beer> beer;
     private final LiveData<List<Rating>> ratings;
     private final LiveData<Wish> wish;
+    private final LiveData<List<Rating>> ownRatings;
     private final LiveData<FridgeItem> fridge;
-
     private final LikesRepository likesRepository;
     private final WishlistRepository wishlistRepository;
     private final FridgeRepository fridgeRepository;
@@ -44,6 +46,8 @@ public class DetailsViewModel extends ViewModel implements CurrentUser {
         wish = wishlistRepository.getMyWishForBeer(currentUserId, getBeer());
         fridge = fridgeRepository.getMyFridgeItemForBeer(currentUserId, getBeer());
         ratings = ratingsRepository.getRatingsForBeer(beerId);
+        ownRatings = ratingsRepository.getMyRatings(currentUserId);
+
         currentUserId.setValue(getCurrentUser().getUid());
     }
 
@@ -59,6 +63,9 @@ public class DetailsViewModel extends ViewModel implements CurrentUser {
         return ratings;
     }
 
+    public LiveData<List<Rating>> getOwnRatings() {
+        return ownRatings;
+    }
     public LiveData<FridgeItem> getFridge() { return fridge; }
 
     public void setBeerId(String beerId) {
