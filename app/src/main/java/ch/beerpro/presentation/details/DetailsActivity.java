@@ -126,12 +126,14 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
             adapter = new RatingsRecyclerViewAdapter(this, model.getCurrentUser());
             recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
+
+            final String ratingBeerId = beerId;
             model.getOwnRatings().observe(this, (ratings) -> {
                 if (ratings.size() > 0) {
 
                     List<Rating> ownBeerRatings = new ArrayList<Rating>();
                     for (Rating rating : ratings) {
-                        if (rating.getBeerId().equals(beerId)) {
+                        if (rating.getBeerId().equals(ratingBeerId)) {
                             ownBeerRatings.add(rating);
                         }
                     }
@@ -258,7 +260,6 @@ public class DetailsActivity extends AppCompatActivity implements OnRatingLikedL
                 return super.onOptionsItemSelected(item);
         }
     }
-}
 
     @OnClick(R.id.button2)
     public void onShareClickedListener() {
