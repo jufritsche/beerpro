@@ -1,10 +1,12 @@
 package ch.beerpro.presentation;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -17,6 +19,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ch.beerpro.MyApplication;
 import ch.beerpro.R;
 import ch.beerpro.presentation.explore.BeerCategoriesFragment;
 import ch.beerpro.presentation.explore.BeerManufacturersFragment;
@@ -32,7 +35,7 @@ import ch.beerpro.presentation.utils.ViewPagerAdapter;
  * <p>
  * The Activity has three tabs, each of which implemented by a fragment and held together by a {@link ViewPager}.
  */
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements BeerCategoriesFragment.OnItemSelectedListener, BeerManufacturersFragment.OnItemSelectedListener {
 
     /**
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
+
+
     }
 
     private void setupViewPager(ViewPager viewPager, TabLayout tabLayout) {
@@ -116,6 +121,17 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.action_logout:
                 logout();
+                return true;
+            case R.id.action_change_theme:
+                boolean darkTheme = ((MyApplication) this.getApplication()).getDarkTheme();
+                if (darkTheme) {
+                    setTheme(R.style.AppTheme);
+                    ((MyApplication)  this.getApplication()).setDarkTheme(false);
+                } else {
+                    setTheme(R.style.AppTheme_Dark);
+                    ((MyApplication)  this.getApplication()).setDarkTheme(true);
+                }
+                this.recreate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

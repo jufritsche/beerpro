@@ -2,6 +2,7 @@
     <string name="app_name">Beer Pro</string>
     <string name="title_activity_home_screen">Beer Pro</string>
     <string name="action_settings">Einstellungen</string>
+    <string name="action_change_theme">Change Theme</string>
     <string name="action_logout">Abmelden</string>
     <string name="todo">TODO</string>
     <string name="fmt_num_ratings">Gefällt %d</string>

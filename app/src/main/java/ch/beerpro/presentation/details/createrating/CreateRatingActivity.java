@@ -35,12 +35,13 @@ import butterknife.ButterKnife;
 import ch.beerpro.GlideApp;
 import ch.beerpro.R;
 import ch.beerpro.domain.models.Beer;
+import ch.beerpro.presentation.BaseActivity;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 import pl.tajchert.nammu.Nammu;
 import pl.tajchert.nammu.PermissionCallback;
 
-public class CreateRatingActivity extends AppCompatActivity {
+public class CreateRatingActivity extends BaseActivity {
 
     public static final String ITEM = "item";
     public static final String RATING = "rating";
