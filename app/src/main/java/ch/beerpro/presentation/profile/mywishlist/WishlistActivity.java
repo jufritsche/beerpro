@@ -21,9 +21,10 @@ import butterknife.ButterKnife;
 import ch.beerpro.R;
 import ch.beerpro.domain.models.Beer;
 import ch.beerpro.domain.models.Wish;
+import ch.beerpro.presentation.BaseActivity;
 import ch.beerpro.presentation.details.DetailsActivity;
 
-public class WishlistActivity extends AppCompatActivity implements OnWishlistItemInteractionListener {
+public class WishlistActivity extends BaseActivity implements OnWishlistItemInteractionListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

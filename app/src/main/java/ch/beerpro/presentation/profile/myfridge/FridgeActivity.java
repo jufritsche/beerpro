@@ -21,9 +21,10 @@ import butterknife.ButterKnife;
 import ch.beerpro.R;
 import ch.beerpro.domain.models.Beer;
 import ch.beerpro.domain.models.FridgeItem;
+import ch.beerpro.presentation.BaseActivity;
 import ch.beerpro.presentation.details.DetailsActivity;
 
-public class FridgeActivity extends AppCompatActivity implements OnFridgeItemInteractionListener {
+public class FridgeActivity extends BaseActivity implements OnFridgeItemInteractionListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

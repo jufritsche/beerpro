@@ -19,13 +19,14 @@ import com.google.common.base.Strings;
 
 import ch.beerpro.R;
 import ch.beerpro.domain.models.Beer;
+import ch.beerpro.presentation.BaseActivity;
 import ch.beerpro.presentation.details.DetailsActivity;
 import ch.beerpro.presentation.explore.search.beers.SearchResultFragment;
 import ch.beerpro.presentation.explore.search.suggestions.SearchSuggestionsFragment;
 import ch.beerpro.presentation.profile.mybeers.MyBeersViewModel;
 import ch.beerpro.presentation.profile.mybeers.OnMyBeerItemInteractionListener;
 
-public class SearchActivity extends AppCompatActivity
+public class SearchActivity extends BaseActivity
         implements SearchResultFragment.OnItemSelectedListener, SearchSuggestionsFragment.OnItemSelectedListener,
         OnMyBeerItemInteractionListener {
 

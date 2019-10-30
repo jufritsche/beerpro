@@ -17,9 +17,10 @@ import java.util.List;
 
 import ch.beerpro.R;
 import ch.beerpro.domain.models.User;
+import ch.beerpro.presentation.BaseActivity;
 import ch.beerpro.presentation.MainActivity;
 
-public class SplashScreenActivity extends AppCompatActivity {
+public class SplashScreenActivity extends BaseActivity {
 
     private static final String TAG = "SplashScreenActivity";
 
